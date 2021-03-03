@@ -2,7 +2,7 @@
 //C:\Windows\Microsoft.NET\Framework\v3.5\csc /t:library /lib:..\CM3D2x64_Data\Managed /r:UnityEngine.dll /r:UnityInjector.dll /r:Assembly-CSharp.dll CM3D2.ShapeAnimator.Plugin.cs
 //
 //シバリスのUnityInjectorフォルダ内でのコンパイル
-//C:\Windows\Microsoft.NET\Framework\v3.5\csc /t:library /lib:..\..\..\CM3D2x64_Data\Managed /r:UnityEngine.dll /r:..\..\Loader\UnityInjector.dll /r:Assembly-CSharp.dll CM3D2.ShapeAnimator.Plugin.cs
+//C:\Windows\Microsoft.NET\Framework\v3.5\csc /t:library /lib:lib /r:UnityEngine.dll /r:UnityInjector.dll /r:Assembly-CSharp.dll COM3D2.ShapeAnimator.Plugin.cs
 
 using System;
 using System.IO;
@@ -31,89 +31,23 @@ namespace COM3D2.ShapeAnimator
         private readonly static string PLUGIN_VERSION = "0.3.8.3";
         private readonly static int WINDOW_ID = 190;
 
-/*
-
-Events						OM3D2	CBL
-	エディット					5		4
-	夜伽						14		10
-	男エディット				12		8
-	イベント一般				15		11
-	回想モード					24		(未実装)
-	スタジオモード				26		20
-執務室(複数メイドプラグイン用)	3		3
-
-かしずきモード					53
-スカウトモード					114
-互換夜伽						63
-
-
-Dance								COM3D2		CBL
-●COM3D2
-	Night Magic Fire				37,45		29,34
-	Night Magic Fire-ENG.			90,91		69,70
-	Blooming Dreaming				38,43		30,32
-	キミに愛情でりぃしゃす			39,44		31,33
-	Luminus Moment					50,62		42,43
-	Melody of Empire				58,55,61	38,35,41
-	ドキドキ☆Fallin'Love			4,59		3,39
-	entrance to you					20,64		16,44
-	rhythmix to you					27,60		21,40
-	scarlet leap					22,56		18,36
-
-●+GP01
-	secret deep blue				82,83		61,62
-	fusionic addition				84			63
-
-●+GP02
-	COM3D2とCOM3D2CBLのGameDataフォルダを共有化していると、CBLでも再生可能だったりします。
-	remember to dearest				96,98		(未実装　75，77)
-	DAN! GAN! PARTY!!				101,102		(未実装　80，81)
-	love more cry more				99			(未実装　78)
-
-●+GP01Fb
-	speed up mind					118,119		97,98
-
-●DLC
-	さくらうららか　はらひらり		71,72		51,52
-	maiinly priority				76,77		56,57
-	レグルスの涙					107,108		86,87
-	can know two close?				29,57		22,37
-	1st only you					86,87		65,66
-	革命的ハートグラフィー			122,121		101,100
-
-	candy girl						88,89		67,68
-	タイヨウパラダイス				92,93		71,72
-	恋しちゃったみたい				100			79
-	kiss me choose me				120			99
-
-●CM3D2 Act.1～3
-	stellar my tears				103,104		82,83
-	happy! happy! スキャンダル!!	106,105		85,84
-	Sweet Sweet Everyday			109,110		88,89
-
-●未実装
-	Selfish Destiny					123,124		102,103
-	SUN!　シャイン!　夏
-
-*/
-
-        private readonly static int[] EnableSceneLevel = new int[]
-         {   5, 14, 12, 15, 24, 26,  3, 18, 53,114,
-// 上段をイベント、下段をダンス用。
-	        37, 45, 90, 91, 38, 43, 39, 44, 50, 62, 58, 55, 61,  4, 59, 20,
-    	    64, 27, 60, 22, 56, 82, 83, 84, 96, 98,101,102, 99,118,119, 29,
-       	    57, 86, 87, 88, 89, 92, 93,100,120,103,104,106,105,109,110,122,
-      	   121, 71, 72, 76, 77,107,108,124,124
-        };
-        
-        private readonly static int[] EnableSceneLevelCBL = new int[]
-         {   4, 10,  8, 11, 20, 28,
-            29, 34, 70, 69, 30, 32, 31, 33, 42, 43, 38, 35, 41,  3, 39, 16,
-            44, 21, 40, 18, 36, 61, 62, 63, 75, 77, 80, 81, 78, 97, 98, 22,
-            37, 65, 66, 67, 68, 71, 72, 79, 99, 82, 83, 85, 84, 88, 89,101,
-           100, 51, 52, 56, 57, 86, 87,102,103
-        };
-
+        //4     エディット(Chu-B Lip)
+        //5     エディット
+        //10    夜伽(Chu-B Lip)
+        //14    夜伽
+        //8     男エディット(Chu-B Lip)
+        //12    男エディット
+        //11    イベント一般(Chu-B Lip)
+        //15    イベント一般
+        //24    回想モード
+        //21    撮影モード(Chu-B Lip)
+        //26    撮影モード
+        //3     執務室(複数メイドプラグイン用)
+        //18    メイドバトル
+        //4, 20, 22, 26, 28 ダンス
+        //3, 16, 18, 20, 22 ダンス(Chu-B Lip)
+        private readonly static int[] EnableSceneLevel = new int[] { 5, 14, 12, 15, 24, 26, 3, 18, 43};
+        private readonly static int[] EnableSceneLevelCBL = new int[] { 4, 10, 8, 11, 21, 16, 18, 20, 22 };
         private bool isChubLip = false;
         private bool isDance = false;
         private bool isDanceInit = false;
