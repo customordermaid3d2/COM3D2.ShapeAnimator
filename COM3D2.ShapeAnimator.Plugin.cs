@@ -776,6 +776,28 @@ namespace COM3D2.ShapeAnimator
                             dm[i].maidSel = 0;
                         dm[i].maid = dm[i].maidSel;
                     }
+
+                    rectItem.x += rectItem.width;
+                    // 모든 캐릭 적용 여부
+                    if (GUI.Button(rectItem, "A", gsButton))
+                    {
+                        switch (dm[i].mod)
+                        {
+                            case DataManager.ModType.none:
+                                dm[i].mod = DataManager.ModType.All;
+                                Debug.Log("모든캐릭 적용:" + dm[i].tag);
+                                break;
+                            case DataManager.ModType.All:
+                                //break;
+                            default:
+                                dm[i].mod = DataManager.ModType.none;
+                                Debug.Log("일반 적용:" + dm[i].tag);
+                                break;
+                        }
+
+
+                    }
+
                     rectItem.Set(rectItem.x + rectItem.width, rectItem.y, rectInner.width - fFontSize * 10, fItemHeight);
                     GUI.enabled = dm[i].maidFixedAssign < 0;
                     GUI.Label(rectItem, dm[i].maidGuid == string.Empty ? mm.listName[dm[i].maidSel] : "!!" + dm[i].maidNameByGuid, gsLabel);
@@ -786,9 +808,9 @@ namespace COM3D2.ShapeAnimator
                     if (dm[i].maidGuid != string.Empty)
                         sMaidAssinButtonName = "ID指定";
                     else if (dm[i].maidFixedAssign >= 0)
-                        sMaidAssinButtonName = "名前指定";
+                        sMaidAssinButtonName = "이름지정";
                     else
-                        sMaidAssinButtonName = "通常指定";
+                        sMaidAssinButtonName = "일반지정";
 
                     if (GUI.Button(rectItem, sMaidAssinButtonName, gsButton))
                     {
@@ -798,7 +820,7 @@ namespace COM3D2.ShapeAnimator
                     if(gm.IsSkipAnimate(i))
                     {
                         rectItem.Set(rectScrollInner.x, rectItem.y + rectItem.height + fMargin, fFontSize * 4, fItemHeight);
-                        dm[i].groupReverse = GUI.Toggle(rectItem, dm[i].groupReverse, "反転", gsToggle);
+                        dm[i].groupReverse = GUI.Toggle(rectItem, dm[i].groupReverse, "반전", gsToggle);
 
                         rectItem.Set(rectScrollInner.width - fFontSize * 3.5f, rectItem.y, fFontSize * 4, fItemHeight);
                         if (GUI.Button(rectItem, "Num", gsButton))
@@ -961,7 +983,7 @@ namespace COM3D2.ShapeAnimator
                                     dm[i].actionIntervalMin = dm[i].actionIntervalMax;
 
                                 rectItem.Set(rectScrollInner.x, rectItem.y + fItemHeight, fFontSize * 7, fItemHeight);
-                                GUI.Label(rectItem, "待機中の値は");
+                                GUI.Label(rectItem, "대기중의값은");
 
                                 bool bZero = false;
                                 bool bPoint = false;
@@ -977,7 +999,7 @@ namespace COM3D2.ShapeAnimator
                                 }
 
                                 rectItem.Set(rectItem.x + rectItem.width, rectItem.y, fFontSize * 5, fItemHeight);
-                                bTmp = GUI.Toggle(rectItem, bZero, "左端へ", gsToggle);
+                                bTmp = GUI.Toggle(rectItem, bZero, "왼쪽에", gsToggle);
                                 if (bZero != bTmp)
                                 {
                                     bZero = bTmp;
@@ -1032,7 +1054,7 @@ namespace COM3D2.ShapeAnimator
 
                 GUI.enabled = true;
                 rectItem.Set(rectScrollInner.width - fFontSize * 7.5f, rectItem.y, fFontSize * 4, fItemHeight);
-                if (GUI.Button(rectItem, dm[i].enable ? "無効" : "有効", gsButton))
+                if (GUI.Button(rectItem, dm[i].enable ? "해제" : "유효", gsButton))
                 {
                     dm[i].enableClick = true;
                     dm[i].enable = !dm[i].enable;
@@ -1044,7 +1066,7 @@ namespace COM3D2.ShapeAnimator
                 }
 
                 rectItem.Set(rectScrollInner.width - fFontSize * 3.5f, rectItem.y, fFontSize * 4, fItemHeight);
-                if (GUI.Button(rectItem, "削除", gsButton))
+                if (GUI.Button(rectItem, "삭제", gsButton))
                 {
                     iConfirmRemove = i;
                 }
@@ -1081,7 +1103,7 @@ namespace COM3D2.ShapeAnimator
             {
                 LoadXML();
                 mm.bUpdate = true;
-                sMessageLabel = "復元完了";
+                sMessageLabel = "복원완료";
                 iMessageLabelTimer = 120;
             }
 
@@ -1124,14 +1146,14 @@ namespace COM3D2.ShapeAnimator
             if (iConfirmRemove >= 0)
             {
                 rectItem.Set(rectInner.x, rectItem.y + rectItem.height + fMargin, rectInner.width, fItemHeight * 2);
-                GUI.Label(rectItem, dm[iConfirmRemove].name + "\nを削除しますか？");
+                GUI.Label(rectItem, dm[iConfirmRemove].name + "\n을 삭제 하시겠습니까?");
 
                 rectItem.Set(rectInner.width - fFontSize * 8, rectItem.y + rectItem.height + fMargin, fFontSize * 4, fItemHeight);
                 if (GUI.Button(rectItem, "はい", gsButton))
                 {
                     RemoveSlider(iConfirmRemove);
                     iConfirmRemove = -1;
-                    sMessageLabel = "削除完了";
+                    sMessageLabel = "삭제 완료";
                     iMessageLabelTimer = 120;
                 }
 
@@ -1485,19 +1507,50 @@ namespace COM3D2.ShapeAnimator
             bool[] bFace = new bool[mm.listMaid.Count];
             bool[] b = new bool[mm.listMaid.Count];
 
+
             for (int i = 0; i < dm.Count; i++)
             {
-                if (dm[i].maid < 0)
-                    continue;
-                if (!dm[i].enable)
+                if (dm[i].mod == DataManager.ModType.none)
                 {
-                    if (iDisable == i)
-                        VertexMorph_FromProcItem(mm.listMaid[dm[i].maid].body0, dm[i].tag, 0f);
+                    if (dm[i].maid < 0)
                     continue;
-                }
-                b[dm[i].maid] = VertexMorph_FromProcItem(mm.listMaid[dm[i].maid].body0, dm[i].tag, dm[i].val);
 
-                bFace[dm[i].maid] = b[dm[i].maid] ? b[dm[i].maid] : bFace[dm[i].maid];
+                    if (!dm[i].enable)
+                    {
+                        if (iDisable == i)
+                            VertexMorph_FromProcItem(mm.listMaid[dm[i].maid].body0, dm[i].tag, 0f);
+                        continue;
+                    }
+                    b[dm[i].maid] = VertexMorph_FromProcItem(mm.listMaid[dm[i].maid].body0, dm[i].tag, dm[i].val);
+                    bFace[dm[i].maid] = b[dm[i].maid] ? b[dm[i].maid] : bFace[dm[i].maid];
+                }
+                else
+                {
+                    for (int j = 0; j < bFace.Length; j++)
+                    {
+                        if (!dm[i].enable)
+                        {
+                            if (iDisable == i)
+                                VertexMorph_FromProcItem(mm.listMaid[j].body0, dm[i].tag, 0f);
+                            continue;
+                        }
+                        b[j] = VertexMorph_FromProcItem(mm.listMaid[j].body0, dm[i].tag, dm[i].val);
+                        bFace[j] = b[j] ? b[j] : bFace[j];
+                    }
+                }
+
+            }
+
+            for (int i = 0; i < bFace.Length; i++)
+            {
+                if (bFace[i] == mm.listMaid[i].boMabataki)
+                {
+                    mm.listMaid[i].boMabataki = !bFace[i];
+                    if (bFace[i])
+                    {                        
+                        mm.listMaid[i].body0.Face.morph.EyeMabataki = 0f; //  윙크
+                    }
+                }
             }
 
             //for (int i = 0; i < dm.Count; i++)
@@ -1520,19 +1573,20 @@ namespace COM3D2.ShapeAnimator
             //    bFace[dm[i].maid] = b[dm[i].maid] ? b[dm[i].maid] : bFace[dm[i].maid];
             //}
 
-            for (int i = 0; i < bFace.Length; i++)
-            {
-                if (bFace[i] == mm.listMaid[i].boMabataki)
-                {
-                    mm.listMaid[i].boMabataki = !bFace[i];
-                    if (bFace[i])
-                    {
-                        mm.listMaid[i].body0.Face.morph.EyeMabataki = 0f;
-// 目閉じ対策？　とりあえず保留
-//                        mm.listMaid[i].body0.Face.morph.BlendValues[(int)mm.listMaid[i].body0.Face.morph.hash["eyeclose"]] = 0f;
-                    }
-                }
-            }
+            //for (int i = 0; i < bFace.Length; i++)
+            //{
+            //    if (bFace[i] == mm.listMaid[i].boMabataki)
+            //    {
+            //        mm.listMaid[i].boMabataki = !bFace[i];
+            //        if (bFace[i])
+            //        {
+            //            //  윙크
+            //            mm.listMaid[i].body0.Face.morph.EyeMabataki = 0f;
+            //            // 目閉じ対策？　とりあえず保留 눈 닫 대책? 일단 보류
+            //            //                        mm.listMaid[i].body0.Face.morph.BlendValues[(int)mm.listMaid[i].body0.Face.morph.hash["eyeclose"]] = 0f;
+            //        }
+            //    }
+            //}
         }
 
         private void OnMMUpdate()
@@ -1765,13 +1819,16 @@ namespace COM3D2.ShapeAnimator
         {
             for (int i = 0; i < dm.Count; i++)
             {
-                if (!dm[i].enable || string.IsNullOrEmpty(dm[i].tag))
+                if (!dm[i].enable)
                     continue;
 
-                if (dm[i].maid < 0)
-                    continue;
+                if (dm[i].mod==DataManager.ModType.none)
+                {
+                    if (dm[i].maid < 0 || string.IsNullOrEmpty(dm[i].tag))
+                        continue;
+                }
 
-                if(gm.IsSkipAnimate(i))
+                if (gm.IsSkipAnimate(i))
                 {
                     dm[i].bAnimateGroup = true;
                     continue;
@@ -1825,7 +1882,22 @@ namespace COM3D2.ShapeAnimator
                         break;
                 }
 
-                VertexMorph_FromProcItem(mm.listMaid[dm[i].maid].body0, dm[i].tag, dm[i].val);
+                if (dm[i].mod == DataManager.ModType.none)
+                {
+                    VertexMorph_FromProcItem(mm.listMaid[dm[i].maid].body0, dm[i].tag, dm[i].val);
+                }
+                else
+                {
+                    VertexMorph_FromProcItemAll(i);
+                }
+            }
+        }
+
+        private void VertexMorph_FromProcItemAll(int i)
+        {
+            foreach (var md in mm.listMaid)
+            {
+                VertexMorph_FromProcItem(md.body0, dm[i].tag, dm[i].val);
             }
         }
 
@@ -1836,7 +1908,14 @@ namespace COM3D2.ShapeAnimator
                 if (dm[i].bAnimateGroup)
                 {
                     dm[i].val = GetGroupVal(i);
-                    VertexMorph_FromProcItem(mm.listMaid[dm[i].maid].body0, dm[i].tag, dm[i].val);
+                    if (dm[i].mod == DataManager.ModType.none)
+                    {
+                        VertexMorph_FromProcItem(mm.listMaid[dm[i].maid].body0, dm[i].tag, dm[i].val);                        
+                    }
+                    else
+                    {
+                        VertexMorph_FromProcItemAll(i);
+                    }
                     dm[i].bAnimateGroup = false;
                 }
             }
@@ -1944,6 +2023,13 @@ namespace COM3D2.ShapeAnimator
             fMax = fMin + fm;
         }
 
+        /// <summary>
+        /// 얼굴 효과 반영후 얼굴 여부 반환?
+        /// </summary>
+        /// <param name="body"></param>
+        /// <param name="sTag"></param>
+        /// <param name="f"></param>
+        /// <returns></returns>
         private bool VertexMorph_FromProcItem(TBody body, string sTag, float f)
         {
             bool bFace = false;
@@ -1959,12 +2045,12 @@ namespace COM3D2.ShapeAnimator
                             bFace = true;
                         }
 		                int h = (int)morph.hash[sTag];
-///cm>com
-///不要な処理につきコメントアウト
-///                     morph.BlendValuesCHK[h] = -1f;
+                        ///cm>com
+                        ///不要な処理につきコメントアウト 불필요한 처리에 대해 주석
+                        ///                     morph.BlendValuesCHK[h] = -1f;
 
-///cm>com               morph.BlendValues[h] = f;
-                    	morph.SetBlendValues(h, f);
+                        ///cm>com               morph.BlendValues[h] = f;
+                        morph.SetBlendValues(h, f);
 
                     	morph.FixBlendValues();
                     }
@@ -2252,6 +2338,9 @@ namespace COM3D2.ShapeAnimator
 
         private class DataManager : ICloneable
         {
+            /// <summary>
+            /// 반복 타입
+            /// </summary>
             public enum AnimeType
             {
                 none,
@@ -2267,6 +2356,20 @@ namespace COM3D2.ShapeAnimator
                 point
             }
 
+
+            /// <summary>
+            /// 메이드 전체 적용 여부
+            /// </summary>
+            public enum ModType
+            {
+                none,
+                All
+            }
+
+            // 모든 캐릭 적용 여부
+            public ModType mod { get; set; }
+
+            // 활성 여부
             public bool enable { get; set; }
             public bool enableInSavedata { get; set; }
             public bool enableClick { get; set; }
@@ -2278,6 +2381,8 @@ namespace COM3D2.ShapeAnimator
 
             public int maid { get; set; }
             public int maidInSavedata { get; set; }
+            
+            // 메이드 번호?
             public int maidSel { get; set; }
             public int maidFixedAssign { get; set; }
             public string maidGuid { get; set; }
