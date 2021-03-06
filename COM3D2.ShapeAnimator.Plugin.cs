@@ -1589,8 +1589,8 @@ Dance								COM3D2		CBL
 
             for (int i = 0; i < dm.Count; i++)
             {
-                if (dm[i].mod == DataManager.ModType.none)
-                {
+                //if (dm[i].mod == DataManager.ModType.none)
+                //{
                     if (dm[i].maid < 0)
                     continue;
 
@@ -1602,24 +1602,25 @@ Dance								COM3D2		CBL
                     }
                     b[dm[i].maid] = VertexMorph_FromProcItem(mm.listMaid[dm[i].maid].body0, dm[i].tag, dm[i].val);
                     bFace[dm[i].maid] = b[dm[i].maid] ? b[dm[i].maid] : bFace[dm[i].maid];
-                }
-                else
-                {
-                    for (int j = 0; j < bFace.Length; j++)
-                    {
-                        if (!dm[i].enable)
-                        {
-                            if (iDisable == i)
-                                VertexMorph_FromProcItem(mm.listMaid[j].body0, dm[i].tag, 0f);
-                            continue;
-                        }
-                        b[j] = VertexMorph_FromProcItem(mm.listMaid[j].body0, dm[i].tag, dm[i].val);
-                        bFace[j] = b[j] ? b[j] : bFace[j];
-                    }
-                }
+                //}
+                //else
+                //{
+                //    for (int j = 0; j < bFace.Length; j++)
+                //    {
+                //        if (!dm[i].enable)
+                //        {
+                //            if (iDisable == i)
+                //                VertexMorph_FromProcItem(mm.listMaid[j].body0, dm[i].tag, 0f);
+                //            continue;
+                //        }
+                //        b[j] = VertexMorph_FromProcItem(mm.listMaid[j].body0, dm[i].tag, dm[i].val);
+                //        bFace[j] = b[j] ? b[j] : bFace[j];
+                //    }
+                //}
 
             }
 
+            // 이거 제거하는게 나을듯 한데
             for (int i = 0; i < bFace.Length; i++)
             {
                 if (bFace[i] == mm.listMaid[i].boMabataki)
