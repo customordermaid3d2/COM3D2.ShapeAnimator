@@ -1554,7 +1554,7 @@ Dance								COM3D2		CBL
                 //    enable = enableInSavedata;
                 //}
 
-                dm.Add(new DataManager(name, tag, val,
+                dm.Add(new DataManager((DataManager.ModType)mod, name, tag, val,
                         enable, enableInSavedata, fold,
                         (DataManager.AnimeType)animetype, modulate1, modulate2, point,
                         actiontimemin, actiontimemax, actionintervalmin, actionintervalmax,
@@ -2517,7 +2517,7 @@ Dance								COM3D2		CBL
                 //groupModulate2Text = "1";
             }
 
-            public DataManager(string name, string tag, float val,
+            public DataManager(ModType mod, string name, string tag, float val,
                                 bool enable, bool enablesave, bool fold, AnimeType anime,
                                 float f1, float f2, float p,
                                 int atmin, int atmax, int aimin, int aimax,
@@ -2527,6 +2527,7 @@ Dance								COM3D2		CBL
                                 bool groupReverse, float groupOffset, float groupModulate2, float groupPoint
                                 )
             {
+                this.mod = mod;
                 this.name = name;
                 this.tag = tag;
                 this.val = val;
